@@ -1,0 +1,39 @@
+{% if form.is_multipart %}
+<form enctype="multipart/form-data" method="post">
+{% else %}
+<form method="post">
+{% endif %}
+    <div class="row">
+        <div class="col s12 m8 offset-m2">
+            <div class="section">
+                <h5 class="center">{{ form_label }}</h5>
+                <div class="row "></div>
+                {% if form.non_field_errors %}<p class="card red white-text" style="padding: 8px;">{% for error in form.non_field_errors %}{{ error}} </br>{% endfor %}<a class="btn-floating halfway-fab waves-effect waves-light white " onclick="event.target.parentNode.parentElement.hidden = true;"><i class="material-icons black-text" >close</i></a></p>{% endif %}
+            </div>
+            <div class="divider"></div>
+            <div class="row"></div>
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.widget_type == "password" %}
+                    {% include 'material/password.html' with field=field %}
+                {% elif field.widget_type == "clearablefile" %}
+                    {% include 'material/file.html' with field=field %}
+                {% elif field.widget_type == "textarea" %}
+                    {% include 'material/textarea.html' with field=field %}
+                {% else %}
+                    {% include 'material/input.html' with field=field %}
+                {% endif %}
+            {% endfor %}
+            <div class="input-field col s12">
+                {% url 'login' as login %}
+                {% url 'signup' as signup %}
+                {% if request.path ==  login %}
+                    <p>Create an account? <a href="{{signup}}">Signup</a></p>
+                {% elif request.path == signup %}
+                    <p>Already have an account? <a href="{{ login }}">Login</a></p>
+                {% endif %}
+                <button type="submit" class="waves-effect waves-light btn green" style="width: 100%;">{{ form_label }}</button>
+            </div>
+        </div>
+    </div>
+</form>

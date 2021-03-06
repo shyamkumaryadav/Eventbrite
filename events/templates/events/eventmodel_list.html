@@ -1,0 +1,76 @@
+{% extends 'master.html' %}
+{% load events %}
+{% block stylesheet %}
+{% endblock stylesheet %}
+{% block main %}
+<div class="row">
+    {% for item in object_list %}
+        <div class="col s12 m4">
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{ item.image.url }}"  height="150px" width="300px">
+                    <a class="btn-floating halfway-fab waves-effect waves-red white{% if user.is_authenticated %}" onclick="userLikeThis(event)"{% else %} modal-trigger" href="#modal{{item.id}}" {% endif %} data-id="{{item.id}}" >
+                        <i class="material-icons red-text">
+                            {% is_favorite user item %}
+                        </i></a>
+                </div>
+                <div class="card-content">
+                    <span style="color: #e65100;font-weight: bold;">{{ item.time|date:"D, M j, Y h:i A e" }}</span>
+                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ item.event_name }}</span>
+                    <p style="color: #9c27b0;">{{ item.data|truncatechars:125 }}</p>
+                </div>
+            </div>
+        </div>
+        {% if not user.is_authenticated %}
+            <div id="modal{{item.id}}" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                <h4 class="center" style="font-weight: bold;">Sign in to save this event</h4>
+                <h5 class="left-align" style="color: #4a148c ;font-weight: bold;">{{ item.event_name }}</h5>
+                <p style="color: rgb(20, 11, 199);"><i class="material-icons left">place</i>{{ item.location}}</p>
+                <p style="color: #9c27b0;">{{ item.data }}</p>
+                <div class="center-align" style="color: #e65100;font-weight: bold;">{{ item.time|date:"D, M j, Y h:i A e" }}</div>
+                <img src="{{ item.image.url }}">
+                </div>
+                <div class="modal-footer">
+                <a href="{% url 'signup' %}" class="modal-close waves-effect waves-orange btn white black-text">Signup</a>
+                <a href="{% url 'login' %}" class="modal-close waves-effect waves-purple btn white black-text">Login</a>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock main %}
+
+{% block javascript %}
+{% if user.is_authenticated %}
+<script>
+    function userLikeThis(event){
+            fetch("{% url 'like_event' %}", {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers:{
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                    'X-CSRFToken': "{% if request %}{{ csrf_token }}{% endif %}",
+                },
+                body: JSON.stringify({'event_id': event.target.parentElement.dataset.id}) //JavaScript object of data to POST
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.is_like){
+                    event.target.innerHTML = "favorite"
+                }else{
+                    event.target.innerHTML = "favorite_border"
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
+</script>
+{% else %}
+<script>
+
+</script>
+{% endif %}
+{% endblock %}

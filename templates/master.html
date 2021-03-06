@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventbrite</title>
+    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block stylesheet %}
+    {% endblock stylesheet %}
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper darken-4 white">
+            <a href="/" class="brand-logo red-text" style="padding: 0 10px;font-weight: bold;">Eventbrite</a>
+            <ul id="nav-mobile" class="right">
+                <li><a class="waves-effect  black-text" id="openNav"><i class="material-icons">menu</i></a></li>
+
+            </ul>
+            {% if is_paginated %}
+
+            {% endif %}
+        </div>
+    </nav>
+    <ul class="sidenav">
+        <li>
+          <div class="user-view">
+            <div class="background">
+              <img src="{% static 'images/sea.png' %}" alt="image background sea" style="width:100%" />
+            </div>
+            <img class="circle" src="{% if user.is_authenticated %}{% static 'images/Avatar_happy.png' %}{% else %}{% static 'images/Avatar.png' %}{% endif %}" alt="user avatar"/>
+            {% if user.is_authenticated %}
+            <a href="#!"><span class="white-text name">Welcome {{ user.username }}</span></a>
+            <a href="mailto:{{ user.email }}" target="_blank" rel="noreferrer"><span class="white-text email">{{ user.email }}</span></a>
+            {% else %}
+            <span>AnonymousUser</span>
+            {% endif %}
+          </div>
+        </li>
+        <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">face</i>About</a></li>
+        <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">book</i>Terms</a></li>
+        {% if user.is_authenticated %}
+        <li><div class="divider"></div></li>
+        <li><a href="/#" class="subheader">Subheader</a></li>
+        <li><a class="waves-effect" href="{% url 'events_like' %}"><i class="material-icons">add</i>Event</a></li>
+        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">search</i>Search Event by Name</a></li>
+        <li><a class="waves-effect" href="{% url 'password_change' %}"><i class="material-icons">edit</i>Password Change</a></li>
+        <li><a class="waves-effect" href="{% url 'logout' %}"><i class="material-icons">link</i>Logout</a></li>
+        {% else %}
+        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">add_user</i>Sign up</a></li>
+        <li><a class="waves-effect" href="{% url 'login' %}"><i class="material-icons">link</i>Login</a></li>
+        {% endif %}
+      </ul>
+    <main>
+      <div class="container">
+        {% block main %}
+        {% endblock main %}
+      </div>
+    </main>
+    {% if is_paginated %}
+    <div aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {% if page_obj.has_previous is False %}disabled{% endif %}">
+                <button type="submit" class="page-link" name="page" value="{% if page_obj.has_previous %}1{% endif %}">First
+                </button>
+            </li>
+            <li class="page-item {% if page_obj.has_previous is False %}disabled{% endif %}">
+                <button type="submit" class="page-link" name="page" value="{% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% endif %}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></button>
+            </li>
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}<span class="sr-only">(current)</span>
+                </span></li>
+                {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                <li class="page-item"><button type="submit" class="page-link" name="page" value="{{ num }}" >{{ num }}</button></li>
+                {% endif %}
+            {% endfor %}
+
+            <li class="page-item {% if page_obj.has_next is False %}disabled{% endif %}"><button type="submit" class="page-link" name="page" value="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{%endif%}" aria-label="Next"><span aria-hidden="true">&raquo;</span></button></li>
+            <li class="page-item {% if page_obj.has_next is False %}disabled{% endif %}"><button type="submit" class="page-link" name="page" value="{% if page_obj.has_next %}{{ page_obj.paginator.num_pages }}{%endif%}">Last</button></li>
+        </ul>
+    </div>
+    {% endif %}
+    <footer class="page-footer darken-2 blue">
+        <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Shyamkumar Yadav</h5>
+                <p class="grey-text text-lighten-4">कष्ट में किये गए कर्मों से भाग्य का निर्माण होता है | -- गीता</p>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Contact Me</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.github.com/shyamkumaryadav/">Github</a></li>
+                  <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.linkedin.com/in/shyamkumaryadav/">Linkedin</a></li>
+                  <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.instagram.com/ishyamkumaryadav">Instagram</a></li>
+                  <li><a class="grey-text text-lighten-3" target="_blank" href="https://twitter.com/shyamkumaryada">Twitter</a></li>
+                  <li><a class="grey-text text-lighten-3" target="_blank" href="https://www.facebook.com/ishyamkumaryadav">Facebook</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container center">
+            © <span id="year"></span> Copyright by Shyamkumar yadav
+            </div>
+            <script>
+              document.getElementById('year').innerHTML = new Date().getFullYear()
+            </script>
+          </div>
+    </footer>
+
+</body>
+<script src="{% static 'js/materialize.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+{% block javascript %}
+{% endblock javascript %}
+</html>
