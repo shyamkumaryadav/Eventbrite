@@ -1,4 +1,5 @@
 {% extends 'master.html' %}
+{% load static %}
 {% block stylesheet %}
 {% endblock stylesheet %}
 {% block main %}
@@ -22,7 +23,7 @@
         </div>
     {% empty %}
         <div class="col">
-            No content plz like some event first 
+            <img src="{% static 'images/no_item.svg' %}" class="materialboxed" width="100%" alt="No Item">
         </div>
     {% endfor %}
 </div>

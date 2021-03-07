@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon-16x16.png' %}">
     <title>Eventbrite</title>
     <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -16,12 +19,10 @@
         <div class="nav-wrapper darken-4 white">
             <a href="/" class="brand-logo red-text" style="padding: 0 10px;font-weight: bold;">Eventbrite</a>
             <ul id="nav-mobile" class="right">
-                <li><a class="waves-effect  black-text" id="openNav"><i class="material-icons">menu</i></a></li>
-
+              {% block filter %}
+              {% endblock filter %}
+              <li><a class="waves-effect  black-text" id="openNav"><i class="material-icons">menu</i></a></li>
             </ul>
-            {% if is_paginated %}
-
-            {% endif %}
         </div>
     </nav>
     <ul class="sidenav">
@@ -39,18 +40,20 @@
             {% endif %}
           </div>
         </li>
-        <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">face</i>About</a></li>
-        <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">book</i>Terms</a></li>
+        <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">home</i>Home</a></li>
+        <li><a href="#about" class="waves-effect"><i class="material-icons">face</i>About</a></li>
+        <li><a href="#terms" class="waves-effect"><i class="material-icons">book</i>Terms</a></li>
         {% if user.is_authenticated %}
         <li><div class="divider"></div></li>
-        <li><a href="/#" class="subheader">Subheader</a></li>
-        <li><a class="waves-effect" href="{% url 'events_like' %}"><i class="material-icons">add</i>Event</a></li>
-        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">search</i>Search Event by Name</a></li>
-        <li><a class="waves-effect" href="{% url 'password_change' %}"><i class="material-icons">edit</i>Password Change</a></li>
-        <li><a class="waves-effect" href="{% url 'logout' %}"><i class="material-icons">link</i>Logout</a></li>
+        <li><a href="/#" class="subheader">{{ user.get_full_name|default:"! please enter your First name" }}</a></li>
+        <li><a class="waves-effect" href="{% url 'events_like' %}"><i class="material-icons">grid_view</i>Likes</a></li>
+        {% if event_name_filter %}<li class="hide-on-med-and-up"><a class="waves-effect modal-trigger" href="#modal_filter"><i class="material-icons">search</i>Search Event by Name</a></li>{%endif%}
+        <li><a class="waves-effect" href="{% url 'password_change' %}"><i class="material-icons">password</i>Password Change</a></li>
+        <li><a class="waves-effect" href="{% url 'user_update' user.pk %}"><i class="material-icons">edit</i>Update info</a></li>
+        <li><a class="waves-effect" href="{% url 'logout' %}"><i class="material-icons">logout</i>Logout</a></li>
         {% else %}
-        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">add_user</i>Sign up</a></li>
-        <li><a class="waves-effect" href="{% url 'login' %}"><i class="material-icons">link</i>Login</a></li>
+        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">person_add_alt</i>Sign up</a></li>
+        <li><a class="waves-effect" href="{% url 'login' %}"><i class="material-icons">login</i>Login</a></li>
         {% endif %}
       </ul>
     <main>
@@ -112,10 +115,52 @@
             </script>
           </div>
     </footer>
-
+    {% if event_name_filter %}
+  <div id="modal_filter" class="modal modal-fixed-footer">
+      <form method="get">
+          <div class="modal-content input-field col s12">
+            <a class="modal-close waves-effect btn-flat secondary-content"><i class="material-icons  black-text">close</i></a>
+              <h4>Filter</h4>
+              <input
+                  type="text"
+                  name="{{ filter.form.event_name__icontains.name }}"
+                  id="{{ filter.form.event_name__icontains.id_for_label }}"
+                  placeholder="{{ filter.form.event_name__icontains.label }}"
+                  autofocus
+                  {% if filter.form.event_name__icontains.value %}value="{{ filter.form.event_name__icontains.value }}"{% endif %}
+                  class="autocomplete"
+              >
+          </div>
+          <div class="modal-footer">
+              <button type="submit" class="modal-close waves-effect waves-green btn-flat">Submit</button>
+              <a onclick="location.href = location.pathname" class="modal-close waves-effect waves-green btn-flat">Clear</a>
+          </div>
+      </form>
+    </div>
+{% endif %}
 </body>
 <script src="{% static 'js/materialize.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
+{% if event_name_filter %}
+<script>
+  var instances = M.Autocomplete.init(document.querySelectorAll('.autocomplete'), {
+      data:{
+          {% for item in event_name_filter %}
+          "{{ item }}": null,
+          {% endfor %}
+      }
+  });
+  const filter_modal = M.Modal.getInstance(document.getElementById("modal_filter"));
+  document.addEventListener('keyup', event => {
+    if(event.key === '/' ){
+      if (!filter_modal.isOpen){
+        filter_modal.open();
+        
+      }else filter_modal.close()
+    }
+  })
+</script>
+{% endif %}
 {% block javascript %}
 {% endblock javascript %}
 </html>

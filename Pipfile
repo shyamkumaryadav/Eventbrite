@@ -6,6 +6,14 @@ name = "pypi"
 [packages]
 django = "*"
 pillow = "*"
+django-filter = "*"
+gunicorn = "*"
+psycopg2 = "*"
+django-heroku = "*"
+dj-database-url = "*"
+whitenoise = "*"
+django-cleanup = "*"
+django-storages = {extras = ["dropbox"], version = "*"}
 
 [dev-packages]
 
