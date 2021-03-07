@@ -7,7 +7,7 @@ User = get_user_model()
 # ‘event_name’, ’data’ ,’time’, ‘location’ ,’image’, ‘is_liked’
 
 class EventModel(models.Model):
-    event_name = models.CharField("Event Name", max_length=100)
+    eventname = models.CharField("Event Name", max_length=100)
     data = models.TextField("About")
     time = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=150)
@@ -28,4 +28,4 @@ class UserLikeEvent(models.Model):
         unique_together = ('user', 'event',)
     
     def __str__(self):
-        return f"{self.user} <3 {self.event}"
+        return f"{self.user} like {self.event}"
