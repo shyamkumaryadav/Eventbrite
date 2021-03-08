@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'so8t6jd%r02_5qko%c6%+k6^(j$e3ap@x1z4f855wc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', False)
 
-ALLOWED_HOSTS = [".herokuapps.com", 'localhost', '127.0.0.1',]
+ALLOWED_HOSTS = [".herokuapps.com", 'localhost', '*',]
 
 
 # Application definition
@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_filters',
     'events',
+    'django_filters',
     'whitenoise.runserver_nostatic',
+    'django_cleanup',
 ]
 
 MIDDLEWARE = [
@@ -87,9 +88,9 @@ DATABASES = {
     }
 }
 
-# if not DEBUG:
-#     DATABASES['default'].update(dj_database_url.config(
-#         conn_max_age=600, ssl_require=True))
+if not DEBUG:
+    DATABASES['default'].update(dj_database_url.config(
+        conn_max_age=600, ssl_require=True))
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -128,7 +129,7 @@ USE_TZ = True
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'list_event'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'list_event'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

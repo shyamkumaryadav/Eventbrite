@@ -1,7 +1,7 @@
 {% extends 'master.html' %}
 {% block main %}
 {% if form %}
-    {% include 'material/form.html' with form=form form_label="add Event"%}
+    {% include 'material/form.html' with form=form form_label=form_label %}
 {% endif %}
 {% endblock main %}
 

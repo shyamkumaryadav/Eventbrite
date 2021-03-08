@@ -55,19 +55,37 @@ class EventsLikeView(LoginRequiredMixin, generic.ListView):
 class EventCreateView(LoginRequiredMixin, generic.CreateView):
     model = EventModel
     fields = '__all__'
-    success_url = reverse_lazy('list_event')
+    extra_context = {
+        'form_label': 'Add Event',
+    }
 
 class EventsListView(FilterView):
     model = EventModel
     filterset_fields = {
-            'event_name': ['icontains'],
+            'name': ['icontains'],
         }
     template_name_suffix = '_list'
     paginate_by = 10
     ordering = ['-time',]
-    extra_context = {
-        'event_name_filter': [i.event_name for i in EventModel.objects.all()]
-    }
+   
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'event_name_filter': [i.name for i in self.model._default_manager.all()]
+        })
+        return context
 
 class EventDetailView(generic.DetailView):
     model = EventModel
+
+class EventUpdateView(generic.UpdateView):
+    model = EventModel
+    fields = '__all__'
+    extra_context = {
+        'form_label': 'Update Event',
+    }
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            raise Http404("Yes, I love You!")
+        return super().dispatch(request, *args, **kwargs)

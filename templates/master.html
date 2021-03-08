@@ -108,7 +108,7 @@
           </div>
           <div class="footer-copyright">
             <div class="container center">
-            © <span id="year"></span> Copyright by Shyamkumar yadav
+            © <span id="year"></span> Copyright by Shyamkumar yadav {{ event_name_filter }}
             </div>
             <script>
               document.getElementById('year').innerHTML = new Date().getFullYear()
@@ -123,11 +123,11 @@
               <h4>Filter</h4>
               <input
                   type="text"
-                  name="{{ filter.form.event_name__icontains.name }}"
-                  id="{{ filter.form.event_name__icontains.id_for_label }}"
-                  placeholder="{{ filter.form.event_name__icontains.label }}"
+                  name="{{ filter.form.name__icontains.name }}"
+                  id="{{ filter.form.name__icontains.id_for_label }}"
+                  placeholder="{{ filter.form.name__icontains.label }}"
                   autofocus
-                  {% if filter.form.event_name__icontains.value %}value="{{ filter.form.event_name__icontains.value }}"{% endif %}
+                  {% if filter.form.name__icontains.value %}value="{{ filter.form.name__icontains.value }}"{% endif %}
                   class="autocomplete"
               >
           </div>

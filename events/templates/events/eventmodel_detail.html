@@ -1,4 +1,5 @@
 {% extends 'master.html' %}
+{% load static %}
 {% load events %}
 {% block stylesheet %}
 {% endblock stylesheet %}
@@ -9,7 +10,11 @@
         <div class="col s12 m12">
             <div class="card">
                 <div class="card-image">
-                    <img src="{{ object.image.url }}" class="materialboxed">
+                    {% if object.image %}
+                    <img src="{{ object.image.url }}" width="100%">
+                    {% else %}
+                    <img src="{% static 'images/no_url.svg' %}"  width="100%">
+                    {% endif %}
                     <a class="btn-floating halfway-fab waves-effect waves-red white{% if user.is_authenticated %}" onclick="userLikeThis(event)"{% else %} modal-trigger" href="#modal{{object.id}}" {% endif %} data-id="{{object.id}}" >
                         <i class="material-icons red-text">
                             {% is_favorite user object %}
@@ -19,7 +24,9 @@
                     <span style="color: #e65100;font-weight: bold;">{{ object.time|date:"D, M j, Y h:i A e" }}</span>
                     <br>
                     <span class="" style="color: rgb(20, 11, 199);"><i class="material-icons left">place</i>{{ object.location}}</span>
-                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ object.event_name }}</span>
+                    <br>
+                    <br>
+                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ object.name }}{% if user.is_staff %} <a href="{{ object.get_absolute_url }}" class="waves-effect waves-green"><i class="material-icons">edit</i></a>{% endif %}</span>
                     <p style="color: #5f4164c9;" class="flow-text">{{ object.data}}</p>
                 </div>
             </div>
@@ -29,11 +36,15 @@
                 <div class="modal-content">
                     <h4 class="center" style="font-weight: bold;">Sign in to Like this event</h4>
                     <a class="modal-close waves-effect btn-flat secondary-content"><i class="material-icons  black-text">close</i></a>
-                <h5 class="left-align" style="color: #4a148c ;font-weight: bold;">{{ object.event_name }}</h5>
+                <h5 class="left-align" style="color: #4a148c ;font-weight: bold;">{{ object.name }}</h5>
                 <p style="color: rgb(20, 11, 199);"><i class="material-icons left">place</i>{{ object.location}}</p>
                 <p style="color: #5f4164c9;">{{ object.data }}</p>
                 <div class="center-align" style="color: #e65100;font-weight: bold;">{{ object.time|date:"D, M j, Y h:i A e" }}</div>
-                <img src="{{ object.image.url }}">
+                {% if object.image %}
+                <img src="{{ object.image.url }}" width="100%">
+                {% else %}
+                <img src="{% static 'images/no_url.svg' %}"  width="100%">
+                {% endif %}
                 </div>
                 <div class="modal-footer">
                 <a href="{% url 'signup' %}" class="modal-close waves-effect waves-orange btn white black-text">Signup</a>

@@ -1,10 +1,17 @@
 <div class="file-field input-field col s12">
     <div class="btn blue">
         <span>{{ field.label }}</span>
-        <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" {% if field.value %}value="{{ field.value }}"{% endif %} >
+        <input type="file" accept="image/*" name="{{ field.name }}" id="{{ field.id_for_label }}" {% if field.value %}value="{{ field.value }}"{% endif %} >
     </div>
     <div class="file-path-wrapper">
-        <input type="text"  {% if field.value %}value="{{ field.value }}"{% endif %} class="file-path validate {% if field.errors %}invalid{% endif %}">
+
+        <input type="text" disabled {% if field.value %}value="{{ field.value }}"{% endif %} class="file-path {% if field.errors %}invalid{% endif %}">
+        {% if field.value %}
+        <label>
+            <input type="checkbox" name="image-clear"/>
+            <span>Clear</span>
+        </label>
+        {% endif %}
         {% if field.help_text or field.errors %}
         <span class="helper-text" data-error="{% for error in field.errors %}{{ error }}{% endfor %}">{{ field.help_text|safe }}</span>
         {% endif %}

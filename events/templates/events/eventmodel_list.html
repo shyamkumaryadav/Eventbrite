@@ -1,4 +1,5 @@
 {% extends 'master.html' %}
+{% load static %}
 {% load events %}
 {% block stylesheet %}
 {% endblock stylesheet %}
@@ -16,7 +17,11 @@
         <div class="col s12 m4">
             <div class="card">
                 <div class="card-image">
+                    {% if item.image %}
                     <img src="{{ item.image.url }}"  height="150px" width="300px">
+                    {% else %}
+                    <img src="{% static 'images/no_url.svg' %}"  height="150px" width="300px">
+                    {% endif %}
                     <a class="btn-floating halfway-fab waves-effect waves-red white{% if user.is_authenticated %}" onclick="userLikeThis(event)"{% else %} modal-trigger" href="#modal{{item.id}}" {% endif %} data-id="{{item.id}}" >
                         <i class="material-icons red-text">
                             {% is_favorite user item %}
@@ -24,7 +29,7 @@
                 </div>
                 <div class="card-content">
                     <span style="color: #e65100;font-weight: bold;">{{ item.time|date:"D, M j, Y h:i A e" }}</span>
-                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ item.event_name }}</span>
+                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ item.name }}</span>
                     <p style="color: #5f4164c9;">{{ item.data|truncatechars:125 }}</p>
                 </div>
                 <div class="card-action">
@@ -37,11 +42,15 @@
                 <div class="modal-content">
                     <h4 class="center" style="font-weight: bold;">Sign in to save this event</h4>
                     <a class="modal-close waves-effect btn-flat right"><i class="material-icons  black-text">close</i></a>
-                    <h5 class="left-align" style="color: #4a148c ;font-weight: bold;">{{ item.event_name }}</h5>
+                    <h5 class="left-align" style="color: #4a148c ;font-weight: bold;">{{ item.name }}</h5>
                     <p style="color: rgb(20, 11, 199);"><i class="material-icons left">place</i>{{ item.location}}</p>
                     <p style="color: #5f4164c9;">{{ item.data }}</p>
                 <div class="center-align" style="color: #e65100;font-weight: bold;">{{ item.time|date:"D, M j, Y h:i A e" }}</div>
-                    <img src="{{ item.image.url }}">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}"  height="150px" width="300px">
+                    {% else %}
+                    <img src="{% static 'images/no_url.svg' %}"  height="150px" width="300px">
+                    {% endif %}
                 </div>
                 <div class="modal-footer">
                     
@@ -56,32 +65,33 @@
 {% endblock main %}
 
 {% block javascript %}
-<script>
 {% if user.is_authenticated %}
+<script>
     function userLikeThis(event){
-            fetch("{% url 'like_event' %}", {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers:{
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
-                    'X-CSRFToken': "{% if request %}{{ csrf_token }}{% endif %}",
-                },
-                body: JSON.stringify({'event_id': event.target.parentElement.dataset.id}) //JavaScript object of data to POST
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.is_like){
-                    event.target.innerHTML = "favorite"
-                }else{
-                    event.target.innerHTML = "favorite_border"
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        }
-{% endif %}
-    
+        event.target.parentElement.classList.add('disabled')
+        fetch("{% url 'like_event' %}", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers:{
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                'X-CSRFToken': "{% if request %}{{ csrf_token }}{% endif %}",
+            },
+            body: JSON.stringify({'event_id': event.target.parentElement.dataset.id}) //JavaScript object of data to POST
+        })
+        .then(response => response.json())
+        .then(data => {
+            event.target.parentElement.classList.remove('disabled')
+            if(data.is_like){
+                event.target.innerHTML = "favorite"
+            }else{
+                event.target.innerHTML = "favorite_border"
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
 </script>
+{% endif %}
 {% endblock %}

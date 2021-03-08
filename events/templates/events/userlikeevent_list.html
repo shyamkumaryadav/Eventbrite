@@ -8,7 +8,11 @@
         <div class="col s12 m4">
             <div class="card">
                 <div class="card-image">
-                    <img src="{{ item.event.image.url }}"  height="150px" width="300px">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}"  height="150px" width="300px">
+                    {% else %}
+                    <img src="{% static 'images/no_url.svg' %}"  height="150px" width="300px">
+                    {% endif %}
                     <a class="btn-floating halfway-fab waves-effect waves-red white" onclick="userLikeThis(event)" data-id="{{item.event.id}}" >
                         <i class="material-icons red-text">
                             favorite
@@ -16,7 +20,7 @@
                 </div>
                 <div class="card-content">
                     <span style="color: #e65100;font-weight: bold;">{{ item.event.time|date:"D, M j, Y h:i A e" }}</span>
-                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ item.event.event_name }}</span>
+                    <span class="card-title" style="color: #4a148c ;font-weight: bold;">{{ item.event.name }}</span>
                     <p style="color: #9c27b0;">{{ item.event.data|truncatechars:125 }}</p>
                 </div>
             </div>
@@ -33,28 +37,30 @@
 {% if user.is_authenticated %}
 <script>
     function userLikeThis(event){
-            fetch("{% url 'like_event' %}", {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers:{
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
-                    'X-CSRFToken': "{% if request %}{{ csrf_token }}{% endif %}",
-                },
-                body: JSON.stringify({'event_id': event.target.parentElement.dataset.id}) //JavaScript object of data to POST
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.is_like){
-                    event.target.innerHTML = "favorite"
-                }else{
-                    event.target.parentElement.parentElement.parentElement.parentElement.remove()
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        }
+        event.target.parentElement.classList.add('disabled')
+        fetch("{% url 'like_event' %}", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers:{
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                'X-CSRFToken': "{% if request %}{{ csrf_token }}{% endif %}",
+            },
+            body: JSON.stringify({'event_id': event.target.parentElement.dataset.id}) //JavaScript object of data to POST
+        })
+        .then(response => response.json())
+        .then(data => {
+            event.target.parentElement.classList.remove('disabled')
+            if(data.is_like){
+                event.target.innerHTML = "favorite"
+            }else{
+                event.target.parentElement.parentElement.parentElement.parentElement.remove()
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    }
 </script>
 {% else %}
 <script>
