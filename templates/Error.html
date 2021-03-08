@@ -2,8 +2,12 @@
 {% load static %}
 {% block main %}
 <div class="row">
-    <div class="col">
+    
+    <div class="col s12 m12">
         <img class="materialboxed" width="100%" src="{% static 'images/404.svg' %}">
+    </div>
+    <div class="col s12 m12">
+        <h6>Error at <code>{{ request.build_absolute_uri }}</code> <br> go to <a href="{% url 'list_event' %}">HOME</a></h6>
     </div>
 </div>
 {% endblock main %}

@@ -15,7 +15,7 @@ from .models import UserLikeEvent, EventModel
 User = get_user_model()
 
 def View404(request, *args, **kwargs):
-    return render(request, template_name="Error.html", context=kwargs)
+    return render(request, template_name="Error.html")
 
 class SignupView(generic.CreateView):
     form_class = UserCreationForm
