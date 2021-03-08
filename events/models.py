@@ -27,7 +27,7 @@ class EventModel(models.Model):
     
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse('update_event', args=str(self.pk))
+        return reverse('update_event', kwargs={ 'pk': self.id })
 
 
 class UserLikeEvent(models.Model):

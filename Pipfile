@@ -16,6 +16,7 @@ django-cleanup = "*"
 django-storages = {extras = ["dropbox"], version = "*"}
 
 [dev-packages]
+faker = "*"
 
 [requires]
 python_version = "3.8"

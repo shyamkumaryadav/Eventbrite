@@ -47,12 +47,12 @@
         <li><div class="divider"></div></li>
         <li><a href="/#" class="subheader">{{ user.get_full_name|default:"! please enter your First name" }}</a></li>
         <li><a class="waves-effect" href="{% url 'events_like' %}"><i class="material-icons">grid_view</i>Likes</a></li>
-        {% if event_name_filter %}<li class="hide-on-med-and-up"><a class="waves-effect modal-trigger" href="#modal_filter"><i class="material-icons">search</i>Search Event by Name</a></li>{%endif%}
+        {% if event_name_filter|length > 0 %}<li class="hide-on-med-and-up"><a class="waves-effect modal-trigger" href="#modal_filter"><i class="material-icons">search</i>Search Event by Name</a></li>{% endif %}
         <li><a class="waves-effect" href="{% url 'password_change' %}"><i class="material-icons">password</i>Password Change</a></li>
         <li><a class="waves-effect" href="{% url 'user_update' user.pk %}"><i class="material-icons">edit</i>Update info</a></li>
         <li><a class="waves-effect" href="{% url 'logout' %}"><i class="material-icons">logout</i>Logout</a></li>
         {% else %}
-        <li><a class="waves-effect" href="{% url 'list_event' %}"><i class="material-icons">person_add_alt</i>Sign up</a></li>
+        <li><a class="waves-effect" href="{% url 'signup' %}"><i class="material-icons">person_add_alt</i>Sign up</a></li>
         <li><a class="waves-effect" href="{% url 'login' %}"><i class="material-icons">login</i>Login</a></li>
         {% endif %}
       </ul>
@@ -61,32 +61,36 @@
         {% block main %}
         {% endblock main %}
       </div>
-    </main>
-    {% if is_paginated %}
-    <div aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item {% if page_obj.has_previous is False %}disabled{% endif %}">
-                <button type="submit" class="page-link" name="page" value="{% if page_obj.has_previous %}1{% endif %}">First
-                </button>
-            </li>
-            <li class="page-item {% if page_obj.has_previous is False %}disabled{% endif %}">
-                <button type="submit" class="page-link" name="page" value="{% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% endif %}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></button>
-            </li>
+      {% if is_paginated %}
+      <div aria-label="row">
+          <ul class="pagination center">
+              <li class="{% if page_obj.has_previous is False %}disabled{% else %}waves-effect{% endif %}">
+                  <a href="{% if page_obj.has_previous %}?page=1{% else %}#!{% endif %}">First
+                  </a>
+              </li>
+              <li class="{% if page_obj.has_previous is False %}disabled{% else %}waves-effect{% endif %}">
+                  <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#!{% endif %}"><span aria-hidden="true">&laquo;</span></a>
+              </li>
 
-            {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                <li class="page-item active"><span class="page-link">{{ num }}<span class="sr-only">(current)</span>
-                </span></li>
-                {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
-                <li class="page-item"><button type="submit" class="page-link" name="page" value="{{ num }}" >{{ num }}</button></li>
-                {% endif %}
-            {% endfor %}
+              {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                  <li class="active"><a href="?page={{ num }}">{{ num }}</a></li>
+                  {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                  <li class="waves-effect"><a href="?page={{ num }}">{{ num }}</a></li>
+                  {% endif %}
+              {% endfor %}
 
-            <li class="page-item {% if page_obj.has_next is False %}disabled{% endif %}"><button type="submit" class="page-link" name="page" value="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{%endif%}" aria-label="Next"><span aria-hidden="true">&raquo;</span></button></li>
-            <li class="page-item {% if page_obj.has_next is False %}disabled{% endif %}"><button type="submit" class="page-link" name="page" value="{% if page_obj.has_next %}{{ page_obj.paginator.num_pages }}{%endif%}">Last</button></li>
-        </ul>
-    </div>
+              <li class="{% if page_obj.has_next is False %}disabled{% else %}waves-effect{% endif %}">
+                  <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#!{%endif%}"><span aria-hidden="true">&raquo;</span></a>
+              </li>
+              <li class="{% if page_obj.has_next is False %}disabled{% else %}waves-effect{% endif %}">
+                  <a href="{% if page_obj.has_next %}?page={{ page_obj.paginator.num_pages }}{% else %}#!{%endif%}">Last</a>
+              </li>
+          </ul>
+      </div>
     {% endif %}
+    </main>
+    
     <footer class="page-footer darken-2 blue">
         <div class="container">
             <div class="row">
@@ -108,7 +112,7 @@
           </div>
           <div class="footer-copyright">
             <div class="container center">
-            © <span id="year"></span> Copyright by Shyamkumar yadav {{ event_name_filter }}
+            © <span id="year"></span> Copyright by Shyamkumar yadav
             </div>
             <script>
               document.getElementById('year').innerHTML = new Date().getFullYear()
@@ -147,6 +151,8 @@
       data:{
           {% for item in event_name_filter %}
           "{{ item }}": null,
+          {% empty %}
+          "404": '{% static 'image/404.svg' %}'
           {% endfor %}
       }
   });
