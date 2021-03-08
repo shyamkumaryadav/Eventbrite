@@ -58,6 +58,10 @@ class EventCreateView(LoginRequiredMixin, generic.CreateView):
     extra_context = {
         'form_label': 'Add Event',
     }
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            raise Http404("Yes, I love You!")
+        return super().dispatch(request, *args, **kwargs)
 
 class EventsListView(FilterView):
     model = EventModel
