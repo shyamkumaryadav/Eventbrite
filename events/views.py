@@ -47,7 +47,7 @@ def userLike(request):
 
 class EventsLikeView(LoginRequiredMixin, generic.ListView):
     model = UserLikeEvent
-    paginate_by = 10
+    paginate_by = 12
 
     def get_queryset(self, *args, **kwargs):
         return self.model._default_manager.filter(user=self.request.user)
@@ -69,7 +69,7 @@ class EventsListView(FilterView):
             'name': ['icontains'],
         }
     template_name_suffix = '_list'
-    paginate_by = 10
+    paginate_by = 12
     ordering = ['-time',]
    
     def get_context_data(self, **kwargs):
