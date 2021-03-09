@@ -14,8 +14,27 @@ from .models import UserLikeEvent, EventModel
 
 User = get_user_model()
 
+def ErrorView(request, *args, **kwargs):
+    return render(request, template_name="Error.html", context=kwargs)
+
 def View404(request, *args, **kwargs):
-    return render(request, template_name="Error.html")
+    kwargs.update({
+        'code':404
+    })
+    return ErrorView(request, *args, **kwargs)
+
+def View505(request, *args, **kwargs):
+    kwargs.update({
+        'code': 505
+    })
+    return ErrorView(request, *args, **kwargs)
+
+def View500(request, *args, **kwargs):
+    kwargs.update({
+        'code': 500
+    })
+    return ErrorView(request, *args, **kwargs)
+
 
 class SignupView(generic.CreateView):
     form_class = UserCreationForm

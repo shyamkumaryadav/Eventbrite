@@ -2,15 +2,33 @@
 {% load static %}
 {% block main %}
 <div class="row">
-    
     <div class="col s12 m12">
-        <img class="materialboxed" width="100%" src="{% static 'images/404.svg' %}">
+        <h2 class="center red-text" style="font-weight: bold;letter-spacing: 1em;">{{ code }}</h2 class="center">
+        {% if code == 404 %}
+        <p style="font-size: 1.32em;">Sorry, the page you were looking for doesn't exist</p>
+        {% else %}
+        <p id="mainContant" style="font-size: 1.32em;">Oops, Something went wrong! contact at <button class="btn-flat" id="contact">HELP CENTER</button></p>       
+        {% endif %}
+        <p style="font-size: 1.32em;">You are at <i>{{ request.build_absolute_uri }}</i></p>
     </div>
     <div class="col s12 m12">
-        <h6>Error at <code>{{ request.build_absolute_uri }}</code> <br> go to <a href="{% url 'list_event' %}">HOME</a></h6>
+        <img class="materialboxed" width="100%" src="{% static 'images/404.svg' %}">
     </div>
 </div>
 {% endblock main %}
 
 {% block javascript %}
+{% if code != 404 %}
+<script>
+    document.getElementById('contact').addEventListener('click', event => {
+        document.getElementById('contact').style.display = 'none'
+        document.getElementById('mainContant').innerHTML += `<a target="_blank" id="emailcontact" href="mailto:shyamkumaryadav2003@gmail.com?subject=error {{ code }} at Eventbrite&body=Something went wrong at location {{ request.build_absolute_uri }}">shyamkumaryadav2003@gmail.com</a>`
+        setTimeout(()=>{
+            document.getElementById('emailcontact').remove()
+            document.getElementById('contact').style.display = ''
+        }, 10000)
+    })
+    
+</script>
+{% endif %}
 {% endblock %}
