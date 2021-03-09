@@ -16,11 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+from django.contrib.auth.views import PasswordResetView
 from django.conf import settings
 
 urlpatterns = [
     path('', include('events.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('password_reset/', PasswordResetView.as_view(
+        html_email_template_name='registration/password_reset_email.html'
+    )),
+    path('', include('django.contrib.auth.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
