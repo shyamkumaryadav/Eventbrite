@@ -41,14 +41,14 @@
           </div>
         </li>
         <li><a href="{% url 'list_event' %}" class="waves-effect"><i class="material-icons">home</i>Home</a></li>
-        <li><a href="#about" class="waves-effect"><i class="material-icons">face</i>About</a></li>
-        <li><a href="#terms" class="waves-effect"><i class="material-icons">book</i>Terms</a></li>
+        <li><a href="{% url 'about' %}" class="waves-effect"><i class="material-icons">face</i>About</a></li>
+        <li><a href="{% url 'terms' %}" class="waves-effect"><i class="material-icons">book</i>Terms</a></li>
+        {% if event_name_filter|length > 0 %}<li class="hide-on-med-and-up"><a class="waves-effect modal-trigger" href="#modal_filter"><i class="material-icons">search</i>Search Event by Name</a></li>{% endif %}
         {% if user.is_authenticated %}
         <li><div class="divider"></div></li>
         <li><a href="/#" class="subheader">{{ user.get_full_name|default:"! please enter your First name" }}</a></li>
         <li><a class="waves-effect" href="{% url 'user_update' user.pk %}"><i class="material-icons">edit</i>Update info</a></li>
         <li><a class="waves-effect" href="{% url 'events_like' %}"><i class="material-icons">grid_view</i>Likes</a></li>
-        {% if event_name_filter|length > 0 %}<li class="hide-on-med-and-up"><a class="waves-effect modal-trigger" href="#modal_filter"><i class="material-icons">search</i>Search Event by Name</a></li>{% endif %}
         {% if user.is_staff %}<li><a class="waves-effect" href="{% url 'add_event' %}"><i class="material-icons">add</i>Add Event</a></li>{% endif %}
         <li><a class="waves-effect" href="{% url 'password_change' %}"><i class="material-icons">password</i>Password Change</a></li>
         <li><a class="waves-effect" href="{% url 'logout' %}"><i class="material-icons">logout</i>Logout</a></li>

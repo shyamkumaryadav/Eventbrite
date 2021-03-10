@@ -1,8 +1,11 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from .views import EventsListView, SignupView, userLike, EventsLikeView, EventCreateView, EventDetailView, UserUpdateView, EventUpdateView
 
 urlpatterns = [
-    path('', EventsListView.as_view(), name="list_event"),    
+    path('', EventsListView.as_view(), name="list_event"),
+    path('about/', TemplateView.as_view(template_name="about.html"), name="about"),
+    path('terms/', TemplateView.as_view(template_name="terms.html"), name="terms"),
     path('add/', EventCreateView.as_view(), name="add_event"),
     path('update/<pk>/', EventUpdateView.as_view(), name="update_event"),
     path('event/<pk>/', EventDetailView.as_view(), name="detail_event"),
